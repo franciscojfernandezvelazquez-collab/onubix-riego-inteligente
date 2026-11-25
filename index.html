@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Simulador educativo de riego ONUBIX: electroválvula, dendrómetro y reglas de decisión visibles. Funciona sin Internet.">
+<meta name="theme-color" content="#143f34">
+<title>ONUBIX · Riego Inteligente V3</title>
+<style>
+:root{--ink:#173d32;--muted:#52675e;--green:#186645;--blue:#176f9b;--red:#a03b36;--amber:#875b12;--line:#d8e3dc;--paper:#fff;--soft:#edf3ee}
+*{box-sizing:border-box}body{margin:0;background:#f2f5f1;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button,select,input{accent-color:var(--green)}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #176f9b;outline-offset:4px}main{max-width:1240px;margin:auto;padding:26px 28px 40px}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(28px,4vw,43px);line-height:1.13;letter-spacing:-1.3px;margin-bottom:10px}h2{font-size:21px;letter-spacing:-.3px;margin-bottom:6px}h3{font-size:16px;margin-bottom:8px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase}.muted,.sub{color:var(--muted)}.sub{font-size:14px;margin-bottom:18px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:19px;padding:23px;margin-top:18px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:850;letter-spacing:2px}.brand svg{width:32px;height:32px}.pill{font-size:12px;border-radius:30px;padding:6px 12px;background:#e2ece3;color:#2d5c45;border:1px solid #cbdccf}.intro{display:flex;justify-content:space-between;gap:25px;align-items:end}.intro p{margin-bottom:0;max-width:660px}.version{font-size:40px;font-weight:300;color:#8aa291;white-space:nowrap}.notice{display:flex;align-items:center;gap:10px;margin-top:20px;padding:11px 15px;border:1px solid #d5e1d7;border-radius:11px;font-size:13px;background:#eaf1e8}.notice strong{white-space:nowrap}.result{background:#143f34;color:white;overflow:hidden;border:0;position:relative}.result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.result .eyebrow{color:#b7d2c4}.live{font-size:12px;background:#265446;border:1px solid #547564;border-radius:20px;padding:4px 10px}.decision-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:22px}.state-line{display:flex;align-items:center;gap:12px}.state-dot{height:15px;width:15px;flex:0 0 auto;border-radius:100%;background:#e9bcae;border:3px solid #f4ddd6}.on .state-dot{background:#71e5bc;border-color:#c3f3df}#valveState{font-size:clamp(32px,4.5vw,48px);font-weight:850;letter-spacing:-1px;line-height:1.15;margin:0}.action{font-size:16px;font-weight:650;margin:8px 0 12px;color:#e4ede8}#reason{max-width:530px;color:#e2eee7;font-size:15px;margin-bottom:10px}.rule-tag{display:inline-block;padding:5px 10px;font-size:12px;background:#ffffff14;border:1px solid #ffffff36;border-radius:7px}.valve-wrap{text-align:center;background:#0b302735;border:1px solid #ffffff19;border-radius:13px;padding:8px 8px 12px}.valve-wrap svg{width:100%;max-width:460px;height:auto;display:block;margin:auto}#flowCaption{font-size:13px;margin:0;color:#d2e9de}.stream{opacity:0;stroke:#73dcff;stroke-width:7;stroke-dasharray:12 13;animation:water 1.2s linear infinite}.on .stream{opacity:1}.gate{transform-origin:240px 111px;stroke:#ffb3a4;stroke-width:9;stroke-linecap:round}.on .gate{transform:rotate(90deg);stroke:#88f2cc}.on .water-after{fill:#246f7b}.water-after{fill:#31534e}.coil-light{fill:#ce9588}.on .coil-light{fill:#78e5ba}@keyframes water{to{stroke-dashoffset:-50}}.scenario-head{display:flex;align-items:start;justify-content:space-between;gap:16px}.ghost{border:1px solid var(--line);background:white;color:var(--ink);border-radius:9px;padding:8px 12px;font-size:13px;white-space:nowrap}.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.scenario{padding:12px 14px;text-align:left;background:#f8faf7;border:1px solid var(--line);border-radius:11px;color:var(--ink);min-height:72px;display:flex;gap:10px;align-items:center}.scenario:hover{background:#edf4ec;border-color:#88aa93}.scenario[aria-pressed="true"]{border:2px solid var(--green);padding:11px 13px;background:#eaf4ea}.scenario .number{font:12px ui-monospace,monospace;color:#62786c;align-self:start;margin-top:3px}.scenario strong{display:block;font-size:14px;font-weight:650}.scenario small{display:block;font-size:12px;color:var(--muted);margin-top:2px}.scenario .expected-open{color:#1a6948}.scenario .expected-close{color:#8b3c35}#scenarioNote{font-size:13px;margin:13px 0 0;color:var(--muted);min-height:20px}.workspace{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px;align-items:start}.workspace>.panel{min-width:0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.method-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px;background:#edf3ed;border-radius:11px;margin:16px 0}.method-row label{font-size:14px;font-weight:650}select{max-width:55%;background:white;border:1px solid #afc6b6;padding:8px 12px;border-radius:8px;color:var(--ink)}.field-group{margin-top:22px}.group-title{display:flex;align-items:center;gap:9px;margin-bottom:12px}.group-title span{height:1px;background:var(--line);flex:1}.group-title h3{margin:0;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#3c6050}.factor{border-bottom:1px solid #e3ebe4;padding:14px 0}.factor:last-child{border:0;padding-bottom:0}.factor-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.factor label{font-size:14px;font-weight:650}.value-entry{display:flex;align-items:center;gap:6px;flex-shrink:0}.value-entry input{width:76px;border:1px solid #b6cbbd;border-radius:6px;padding:5px 6px;text-align:right;color:var(--ink);background:#fbfcf9}.unit{font-size:12px;min-width:37px;color:var(--muted)}input[type="range"]{display:block;width:100%;margin:12px 0 8px;min-height:24px;cursor:pointer}.factor-detail{display:flex;gap:8px;align-items:start;margin-top:4px}.badge{display:inline-block;flex-shrink:0;padding:3px 7px;border-radius:5px;font-size:10px;font-weight:750;text-transform:uppercase;letter-spacing:.3px}.badge[data-tone="green"]{background:#e2f1e5;color:#23603d}.badge[data-tone="amber"]{background:#fff1d5;color:#80500c}.badge[data-tone="red"]{background:#fbe6e0;color:#91372e}.badge[data-tone="neutral"]{background:#eaf0ec;color:#4f6257}.factor-detail p{font-size:12px;color:var(--muted);margin:1px 0 0}.threshold{font-size:11px;color:#61766a;margin-top:5px}.predicate{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:9px;background:#fafcf9}.predicate-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:650}.predicate p{font-size:12px;color:var(--muted);margin:5px 0 0}.predicate code{font:12px/1.6 ui-monospace,SFMono-Regular,monospace;white-space:normal}.truth{font-size:11px;border-radius:4px;padding:3px 6px;background:#eaf0eb;white-space:nowrap}.truth.yes{background:#e3f2e5;color:#20613b}.rules-title{margin-top:25px}.rule{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:13px 10px;border:1px solid #e1e8e2;border-radius:10px;margin-top:8px;position:relative}.rule.matched{border:2px solid #1b6d4c;padding:12px 9px;background:#edf5eb}.rank{display:grid;place-items:center;width:26px;height:26px;background:#edf2ec;border-radius:7px;font-size:12px;font-weight:750}.matched .rank{background:#1b6d4c;color:white}.rule strong{display:block;font-size:13px}.rule p{font-size:12px;color:var(--muted);margin:4px 0 0}.rule small{display:block;font-size:11px;color:#64776c;margin-top:5px}.rule.matched small{color:#1c6342;font-weight:700}.priority-note{background:#f1f4ed;border-radius:10px;font-size:12px;padding:12px 14px;margin:14px 0 0;color:#48604f}.diagnostic{margin-top:14px;padding:12px 14px;border-left:3px solid #a77420;background:#fff6e4;border-radius:4px;font-size:13px;color:#704c15}.diagnostic[hidden]{display:none}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:11px}.legend span{display:flex;align-items:center;gap:4px}.legend i{width:7px;height:7px;border-radius:50%;background:#438961}.legend .warn{background:#bb8a37}.legend .neutral{background:#92a69b}.guide{font-size:13px}.guide p{margin-bottom:8px}.guide p:last-child{margin:0}footer{margin-top:22px;font-size:12px;color:#5c7165;display:flex;justify-content:space-between;gap:20px}footer p{max-width:900px;margin:0}.error{color:#fff;background:#923f35;border-radius:8px;padding:12px;margin-top:12px}.invalid-input{border:2px solid #b84130!important;background:#fff3ec!important}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}@media(min-width:1000px){.rules-panel{position:sticky;top:14px}}@media(max-width:800px){main{padding:18px 16px 30px}.workspace{grid-template-columns:1fr}.decision-grid{grid-template-columns:1fr 1fr;gap:10px}.panel{padding:18px}.scenario-grid{grid-template-columns:repeat(2,1fr)}.version{font-size:30px}.notice{align-items:start;flex-direction:column;gap:3px}.intro{align-items:start}.intro p{font-size:14px}}@media(max-width:520px){.topbar{margin-bottom:18px}.brand{font-size:17px}.pill{font-size:10px;padding:5px 8px}.version{display:none}.decision-grid{grid-template-columns:1fr}.valve-wrap svg{max-width:320px}.valve-wrap{padding-top:0}.result-top{align-items:start}.result .eyebrow{max-width:180px}.scenario-grid{grid-template-columns:1fr}.scenario{min-height:62px;padding:10px 12px}.scenario[aria-pressed="true"]{padding:9px 11px}.scenario-head{display:block}.scenario-head .ghost{margin-bottom:14px}.factor-top{gap:6px}.factor label{font-size:13px;max-width:58%}.value-entry input{width:68px}.unit{min-width:32px;font-size:11px}.factor-detail{flex-wrap:wrap;gap:4px}.method-row{padding:10px}.rule p{font-size:12px}footer{display:block}.live{white-space:nowrap}#valveState{font-size:37px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}@media print{body{background:white}main{max-width:none;padding:0}.panel{break-inside:avoid}.workspace{display:block}.rules-panel{position:static}.scenario-grid,.ghost,input[type="range"]{display:none}.stream{animation:none}.result{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+.dock{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(590px,calc(100% - 28px));padding:11px 15px;background:#143f34;color:white;border:1px solid #6a907d;border-radius:13px;box-shadow:0 5px 22px #143f3438}.dock[hidden]{display:none}.dock-state{display:flex;align-items:center;gap:9px}.dock-state strong{font-size:16px}.dock-state small{display:block;color:#d6e7dd;font-size:11px}.dock .state-dot{width:11px;height:11px;border-width:2px}.dock a{color:white;font-size:12px;padding:8px 10px;border:1px solid #8bac9c;border-radius:7px;text-decoration:none;white-space:nowrap}main{padding-bottom:110px}.legend .stop{background:#a03b36}@media print{.dock{display:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="topbar">
+      <div class="brand"><svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="11" fill="#1c6648"/><path d="M10 25C10 13 16 9 27 9c0 11-5 17-15 17m1-3 10-10" fill="none" stroke="#d8efce" stroke-width="2.2" stroke-linecap="round"/></svg>ONUBIX</div>
+      <span class="pill">Aula · Agricultura digital</span>
+    </div>
+    <div class="intro"><div><h1>Riego inteligente</h1><p class="muted">Cambia los datos y observa cuándo se abre la electroválvula. Cada decisión tiene una regla que puedes comprobar.</p></div><span class="version">V3.0</span></div>
+    <div class="notice"><strong>Simulación educativa</strong><span>12 factores manuales · Umbrales ilustrativos · Funciona sin Internet · Sin conexión a equipos reales</span></div>
+  </header>
+
+  <section class="panel result" id="result" aria-labelledby="valveState">
+    <div class="result-top"><span class="eyebrow">Electroválvula virtual · decisión automática</span><span class="live">Respuesta inmediata</span></div>
+    <div class="decision-grid">
+      <div id="decisionText" aria-live="polite" aria-atomic="true">
+        <div class="state-line"><span class="state-dot" aria-hidden="true"></span><h2 id="valveState">CERRADA</h2></div>
+        <p class="action" id="action">Iniciando simulación…</p>
+        <p id="reason">Activa JavaScript para calcular la decisión.</p>
+        <span id="winningRule" class="rule-tag">Regla decisiva</span>
+      </div>
+      <div class="valve-wrap">
+        <svg id="valveDrawing" viewBox="0 0 480 180" role="img" aria-label="Electroválvula virtual cerrada, sin circulación de agua">
+          <text x="25" y="54" fill="#b7d2c4" font-size="11" font-family="system-ui">ENTRADA</text><text x="389" y="54" fill="#b7d2c4" font-size="11" font-family="system-ui">SALIDA</text>
+          <rect x="20" y="91" width="440" height="40" rx="15" fill="#466b5c"/>
+          <rect x="20" y="100" width="210" height="22" rx="9" fill="#246f7b"/><rect class="water-after" x="250" y="100" width="210" height="22" rx="9"/>
+          <rect x="195" y="75" width="90" height="72" rx="13" fill="#275547" stroke="#a0c4ad" stroke-width="2"/>
+          <rect x="216" y="24" width="48" height="42" rx="7" fill="#243d34" stroke="#8cb39d" stroke-width="2"/><circle class="coil-light" cx="240" cy="45" r="5"/><path d="M240 66v13" stroke="#a0c4ad" stroke-width="8"/>
+          <path class="stream" d="M29 111H451" fill="none"/>
+          <line class="gate" x1="240" y1="91" x2="240" y2="131"/>
+          <path d="m435 105 10 6-10 6" fill="none" stroke="#b8d6c8" stroke-width="2"/>
+          <text x="240" y="169" text-anchor="middle" fill="#b7d2c4" font-size="10" font-family="system-ui">ESQUEMA SIMULADO · SIN CONTROL FÍSICO</text>
+        </svg>
+        <p id="flowCaption">Paso bloqueado · Sin caudal simulado</p>
+      </div>
+    </div>
+    <div id="inputError" class="error" role="alert" hidden></div>
+  </section>
+
+  <section class="panel" aria-labelledby="scenarioTitle">
+    <div class="scenario-head"><div><h2 id="scenarioTitle">Demostración en un clic</h2><p class="sub">Cada escenario cambia los 12 parámetros y el tipo de riego. Después puedes ajustar cualquier dato.</p></div><button class="ghost" id="reset" type="button">Restablecer V2</button></div>
+    <div class="scenario-grid" id="presets"></div>
+    <p id="scenarioNote">Valores iniciales de la V2. Mueve un control o elige un escenario.</p>
+  </section>
+
+  <div class="workspace">
+    <section class="panel" aria-labelledby="parametersTitle">
+      <div class="section-head"><h2 id="parametersTitle">Parámetros de entrada</h2><span class="pill">12 factores</span></div>
+      <p class="sub">Desliza o escribe un valor. La decisión se actualiza mientras lo cambias.</p>
+      <div class="method-row"><label for="method">Sistema de riego</label><select id="method"><option value="drip">Goteo</option><option value="sprinkler">Aspersión</option></select></div>
+      <p class="sub" id="methodHint">El viento no bloquea el goteo en esta simulación.</p>
+      <div id="fields"></div>
+      <div class="legend"><span><i></i>Señal que favorece</span><span><i class="warn"></i>Condición o posible freno</span><span><i class="stop"></i>Freno de aspersión</span><span><i class="neutral"></i>Sin activación / contexto</span></div>
+    </section>
+
+    <section class="panel rules-panel" aria-labelledby="rulesTitle">
+      <h2 id="rulesTitle">Por qué toma esta decisión</h2>
+      <p class="sub">Primero se calculan estas condiciones. Después se aplica la primera regla que se cumpla, en orden del 1 al 5.</p>
+      <div id="predicates"></div>
+      <h3 class="rules-title">Reglas exactas y prioridad</h3>
+      <div id="rules"></div>
+      <p class="priority-note">La regla resaltada decide. Las posteriores ya no se aplican. La reserva suficiente impide regar aunque haya estrés; el viento bloquea solo la aspersión, incluso con reserva crítica. La lluvia se ignora si hay reserva crítica o señal dendrométrica combinada, siempre que exista necesidad de riego.</p>
+      <div class="diagnostic" id="diagnostic" hidden></div>
+    </section>
+  </div>
+
+  <section class="panel guide" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">Cómo demostrarlo</h2>
+    <p>Empieza por «Suelo seco»: la válvula se abre. Sube la humedad en profundidad a <strong>45 %</strong>: se cierra. A <strong>30 %</strong>, la sequedad superficial, el estrés o la demanda elevada pueden volver a abrirla; por debajo de <strong>30 %</strong>, ya existe necesidad aunque esos apoyos no aparezcan.</p>
+    <p>Compara «Viento + aspersión» con «Viento + goteo»: solo cambia el sistema de riego. Después compara «Lluvia prevista» con «Reserva crítica + lluvia»: el suelo crítico tiene prioridad sobre la previsión.</p>
+  </section>
+  <footer><p>Los porcentajes de humedad son una escala relativa simulada de disponibilidad de agua, no humedad volumétrica. Los umbrales requieren calibración por cultivo, suelo y fase fenológica. La contracción del tronco también depende de la demanda atmosférica; no diagnostica por sí sola estrés hídrico. ET₀ no equivale a las necesidades de riego del cultivo. Sistema experto basado en reglas, sin modelo entrenado, sensores ni previsiones reales.</p><span>ONUBIX · V3.0</span></footer>
+  <noscript><p class="error">La demostración necesita JavaScript activado en el navegador. No se conecta a Internet ni controla electroválvulas reales.</p></noscript>
+</main>
+<aside class="dock" id="decisionDock" aria-label="Estado actual de la electroválvula" hidden><div class="dock-state"><span class="state-dot" aria-hidden="true"></span><div><strong id="dockState">CERRADA</strong><small id="dockRule">Calculando…</small></div></div><a href="#result">Ver decisión ↑</a></aside>
+<script>
+'use strict';
+// Conserva los 12 factores, umbrales y orden de decisión de la V2.
+const groups = [
+  ['Suelo', [
+    ['h', 'Humedad superficial', 0, 100, 25, '%', 1],
+    ['d', 'Humedad en profundidad', 0, 100, 28, '%', 1]
+  ]],
+  ['Meteorología', [
+    ['t', 'Temperatura', 0, 45, 28, '°C', 1],
+    ['p', 'Probabilidad de lluvia', 0, 100, 15, '%', 1],
+    ['r', 'Lluvia prevista en 24 h', 0, 40, 0, 'mm', 1],
+    ['a', 'Humedad ambiental', 0, 100, 45, '%', 1],
+    ['w', 'Viento', 0, 60, 10, 'km/h', 1],
+    ['s', 'Radiación solar', 0, 1100, 650, 'W/m²', 10],
+    ['e', 'ET₀ diaria', 0, 10, 4, 'mm/día', 0.1]
+  ]],
+  ['Dendrometría', [
+    ['c', 'Contracción máxima diaria', 0, 1000, 250, 'µm', 10],
+    ['b', 'Contracción de referencia', 50, 800, 200, 'µm', 10],
+    ['g', 'Crecimiento diario del tronco', -300, 300, 20, 'µm/día', 10]
+  ]]
+];
+const defs = groups.flatMap(group => group[1]);
+const byId = id => document.getElementById(id);
+const number = (value, digits = 1) => value.toLocaleString('es-ES', {maximumFractionDigits: digits});
+const controls = {};
+
+for (const [name, items] of groups) {
+  const group = document.createElement('div');
+  group.className = 'field-group';
+  const heading = document.createElement('div');
+  heading.className = 'group-title';
+  const title = document.createElement('h3');
+  title.textContent = name;
+  heading.append(title, document.createElement('span'));
+  group.append(heading);
+  for (const [key, label, min, max, value, unit, step] of items) {
+    const tile = document.createElement('div');
+    tile.className = 'factor';
+    tile.dataset.factor = key;
+    tile.innerHTML = `<div class="factor-top"><label for="n-${key}">${label}</label><div class="value-entry"><input id="n-${key}" type="number" min="${min}" max="${max}" step="${step}" value="${value}" aria-describedby="unit-${key} threshold-${key} detail-${key}"><span class="unit" id="unit-${key}">${unit}</span></div></div><input id="v-${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" aria-label="${label}" aria-describedby="threshold-${key} detail-${key}"><div class="factor-detail"><span class="badge" id="badge-${key}" data-tone="neutral"></span><p id="detail-${key}"></p></div><div class="threshold" id="threshold-${key}"></div>`;
+    group.append(tile);
+    controls[key] = {slider: tile.querySelector('input[type="range"]'), numeric: tile.querySelector('input[type="number"]'), min, max, step};
+  }
+  byId('fields').append(group);
+}
+
+// Función pura compartida por la vista y las comprobaciones. No hay temporizadores.
+function decide(v, method) {
+  const ratio = v.c / v.b;
+  const demand = v.e >= 5 || ((v.t >= 30 || v.s >= 800) && v.a < 40);
+  const stress = ratio >= 1.5 && v.g < 0;
+  const critical = v.d < 15;
+  const need = v.d < 30 || (v.d < 45 && (v.h < 25 || stress || demand));
+  const windBlock = method === 'sprinkler' && v.w >= 35;
+  const rain = v.p >= 70 && v.r >= 5;
+  const checks = [v.d >= 65, !need, windBlock, !critical && !stress && rain, true];
+  const rule = checks.findIndex(Boolean) + 1;
+  const on = rule === 5;
+  let action, reason;
+  if (rule === 1) {
+    action = stress ? 'REVISAR PLANTA' : 'NO REGAR';
+    reason = `Reserva profunda de ${number(v.d)} %: alcanza el límite de 65 %. ` + (stress ? 'Hay señal dendrométrica combinada; revisar la planta antes de añadir agua.' : 'La reserva alta tiene prioridad sobre el resto de factores.');
+  } else if (rule === 2) {
+    action = stress ? 'REVISAR PLANTA' : 'NO REGAR';
+    reason = `Con una reserva profunda de ${number(v.d)} %, no se cumple la condición de necesidad. ` + (stress ? 'El estrés con reserva suficiente requiere revisión.' : 'La válvula permanece cerrada.');
+  } else if (rule === 3) {
+    action = 'APLAZAR RIEGO POR ASPERSIÓN';
+    reason = `Existe necesidad, pero el viento de ${number(v.w)} km/h alcanza o supera 35 km/h en aspersión. ` + (critical ? 'La reserva es crítica: revisar una alternativa de riego urgente.' : 'El bloqueo se mantiene aunque haya señal de estrés.');
+  } else if (rule === 4) {
+    action = 'APLAZAR POR LLUVIA';
+    reason = `Hay necesidad, pero se prevén ${number(v.r)} mm con ${number(v.p)} % de probabilidad. Sin reserva crítica ni señal dendrométrica combinada, se espera y se comprueba la recarga del suelo.`;
+  } else {
+    action = 'REGAR';
+    const cause = v.d < 30 ? `La reserva profunda de ${number(v.d)} % está por debajo de 30 %.` : `Reserva profunda limitada (${number(v.d)} %, menor de 45 %) con ${[v.h < 25 && 'superficie seca', stress && 'señal dendrométrica combinada', demand && 'demanda elevada'].filter(Boolean).join(' y ')}.`;
+    reason = cause + ' ' + (critical ? 'Reserva crítica (< 15 %): no se espera a la lluvia.' : stress && rain ? 'La señal dendrométrica combinada evita aplazar por lluvia.' : 'Ninguna regla anterior impide el riego.');
+  }
+  return {ratio, demand, stress, critical, need, windBlock, rain, checks, rule, on, action, reason};
+}
+
+const predicates = [
+  ['critical', 'Reserva crítica', 'Humedad en profundidad < 15 %.'],
+  ['stress', 'Señal dendrométrica combinada', 'Contracción / referencia ≥ 1,5 Y crecimiento < 0 µm/día.'],
+  ['demand', 'Demanda atmosférica elevada', 'ET₀ ≥ 5 mm/día O ((temperatura ≥ 30 °C O radiación ≥ 800 W/m²) Y humedad ambiental < 40 %).'],
+  ['need', 'Necesidad de riego', 'Profundidad < 30 % O (profundidad < 45 % Y (superficie < 25 % O señal dendrométrica combinada O demanda elevada)).']
+];
+for (const [key, label, formula] of predicates) {
+  const row = document.createElement('div');
+  row.className = 'predicate';
+  row.innerHTML = `<div class="predicate-head"><span>${label}</span><span class="truth" id="truth-${key}"></span></div><p>${formula}</p><p id="current-${key}"></p>`;
+  byId('predicates').append(row);
+}
+const ruleDefs = [
+  ['CERRAR · Reserva alta', 'Si la humedad en profundidad ≥ 65 %. Si además hay señal dendrométrica combinada, indicar «Revisar planta».'],
+  ['CERRAR · Sin necesidad', 'Si NO se cumple «Necesidad de riego». Con señal dendrométrica combinada, indicar «Revisar planta».'],
+  ['CERRAR · Viento en aspersión', 'Si el sistema es aspersión Y el viento ≥ 35 km/h. Se aplica incluso con reserva crítica o estrés. En goteo no se activa.'],
+  ['CERRAR · Esperar lluvia', 'Si NO hay reserva crítica Y NO hay señal dendrométrica combinada Y la probabilidad de lluvia ≥ 70 % Y la lluvia prevista en 24 h ≥ 5 mm.'],
+  ['ABRIR · Existe necesidad y no hay frenos', 'Si ninguna de las reglas 1–4 ha decidido. En ese punto hay necesidad, el viento no bloquea y la lluvia no obliga a esperar.']
+];
+ruleDefs.forEach(([label, text], index) => {
+  const row = document.createElement('div');
+  row.className = 'rule';
+  row.id = `rule-${index + 1}`;
+  row.innerHTML = `<span class="rank">${index + 1}</span><div><strong>${label}</strong><p>${text}</p><small id="rule-status-${index + 1}"></small></div>`;
+  byId('rules').append(row);
+});
+
+function factor(key, badge, tone, detail, threshold) {
+  byId(`badge-${key}`).textContent = badge;
+  byId(`badge-${key}`).dataset.tone = tone;
+  byId(`detail-${key}`).textContent = detail;
+  byId(`threshold-${key}`).textContent = threshold;
+}
+function renderFactors(v, d, method) {
+  factor('h', v.h < 25 ? 'Superficie seca' : 'Sin apoyo', v.h < 25 ? 'green' : 'neutral', v.h < 25 ? 'Apoya la necesidad solo si la reserva profunda es < 45 %.' : 'No activa el apoyo por sequedad superficial.', 'Umbral: < 25 %. No abre la válvula por sí sola.');
+  const reserveLabel = v.d >= 65 ? 'Reserva alta' : v.d >= 45 ? 'Suficiente' : v.d >= 30 ? 'Limitada' : v.d >= 15 ? 'Necesidad' : 'Crítica';
+  factor('d', reserveLabel, v.d < 30 ? 'green' : v.d < 45 ? 'amber' : 'neutral', v.d < 15 ? 'Activa necesidad y evita la espera por lluvia; el viento aún puede bloquear aspersión.' : v.d < 30 ? 'Activa necesidad; pueden frenar la lluvia o el viento en aspersión.' : v.d < 45 ? 'Necesita apoyo: superficie seca, señal dendrométrica o demanda elevada.' : 'Mantiene la válvula cerrada, incluso con señal de estrés.', 'Límites: < 15 % crítica · < 30 % necesidad · < 45 % con apoyo · ≥ 65 % reserva alta.');
+  factor('t', v.t >= 30 ? 'Calor' : 'Sin activación', v.t >= 30 ? 'amber' : 'neutral', v.t >= 30 ? 'Con humedad ambiental < 40 %, activa demanda elevada.' : 'La demanda puede activarse por radiación con aire seco o por ET₀.', 'Umbral: ≥ 30 °C Y humedad ambiental < 40 %.');
+  const rainEffect = !d.rain ? 'Se necesitan ambos umbrales para aplazar.' : d.critical || d.stress ? 'Lluvia suficiente, pero la reserva crítica o la señal dendrométrica anula la espera.' : !d.need ? 'Se cumple la previsión; ya se cierra antes por reserva suficiente.' : d.windBlock ? 'Se cumple la previsión; decide antes el viento en aspersión.' : 'Se cumplen ambos umbrales; se aplaza el riego.';
+  factor('p', v.p >= 70 ? 'Umbral alcanzado' : 'Por debajo', d.rain && !d.critical && !d.stress ? 'amber' : 'neutral', rainEffect, 'Umbral: ≥ 70 % Y lluvia prevista ≥ 5 mm/24 h.');
+  factor('r', v.r >= 5 ? 'Umbral alcanzado' : 'Por debajo', d.rain && !d.critical && !d.stress ? 'amber' : 'neutral', rainEffect, 'Umbral: ≥ 5 mm/24 h Y probabilidad ≥ 70 %.');
+  factor('a', v.a < 40 ? 'Aire seco' : 'Sin activación', v.a < 40 ? 'amber' : 'neutral', v.a < 40 ? 'Con temperatura ≥ 30 °C o radiación ≥ 800 W/m², activa demanda.' : 'No activa esa combinación; ET₀ ≥ 5 puede activar demanda igualmente.', 'Umbral: < 40 % Y (temperatura ≥ 30 °C O radiación ≥ 800 W/m²).');
+  factor('w', method === 'drip' ? 'No bloquea goteo' : d.windBlock ? 'Freno aspersión' : 'Sin bloqueo', d.windBlock ? 'red' : 'neutral', method === 'drip' ? `A ${number(v.w)} km/h, el viento no cierra el goteo.` : d.windBlock ? d.need ? 'Cierra por viento: tiene prioridad sobre el estrés y la reserva crítica.' : 'Bloqueo potencial; la reserva suficiente ya decide antes.' : 'La velocidad no alcanza el límite de bloqueo.', 'Umbral: ≥ 35 km/h, exclusivamente en aspersión.');
+  factor('s', v.s >= 800 ? 'Radiación alta' : 'Sin activación', v.s >= 800 ? 'amber' : 'neutral', v.s >= 800 ? 'Con humedad ambiental < 40 %, activa demanda elevada.' : 'La demanda puede activarse por temperatura con aire seco o por ET₀.', 'Umbral: ≥ 800 W/m² Y humedad ambiental < 40 %.');
+  factor('e', v.e >= 5 ? 'Demanda elevada' : 'Por debajo', v.e >= 5 ? 'green' : 'neutral', v.e >= 5 ? 'Activa demanda elevada; solo apoya el riego con reserva profunda < 45 %.' : 'No activa la demanda por ET₀; puede hacerlo la combinación de calor o radiación con aire seco.', 'Umbral: ≥ 5 mm/día. ET₀ no es una dosis de riego.');
+  factor('c', d.ratio >= 1.5 ? 'Relación alta' : 'Relación baja', d.ratio >= 1.5 ? 'amber' : 'neutral', `Relación actual: ${number(d.ratio, 2)} ×. ` + (d.stress ? 'Junto al crecimiento negativo activa la señal combinada.' : 'Para activar la señal también se necesita crecimiento negativo.'), `Umbral: contracción ≥ 1,5 × referencia; ahora ≥ ${number(1.5 * v.b)} µm.`);
+  factor('b', 'Referencia', 'neutral', `Con esta referencia, el límite de contracción es ${number(1.5 * v.b)} µm. Cambiarla recalcula la relación.`, 'Base de comparación simulada, siempre mayor que cero.');
+  factor('g', v.g < 0 ? 'Crecimiento negativo' : 'Sin descenso', v.g < 0 ? 'amber' : 'neutral', v.g < 0 ? d.stress ? 'Con relación ≥ 1,5, activa la señal combinada. No vence a la reserva suficiente.' : 'Falta una relación de contracción ≥ 1,5 para activar la señal.' : 'La señal combinada no se activa, aunque la relación de contracción sea alta.', 'Umbral: < 0 µm/día Y contracción / referencia ≥ 1,5.');
+}
+
+function readValues() {
+  const values = {};
+  for (const [key, control] of Object.entries(controls)) {
+    if (!control.numeric.validity.valid || control.numeric.value === '') return null;
+    values[key] = control.numeric.valueAsNumber;
+    if (!Number.isFinite(values[key])) return null;
+  }
+  return values;
+}
+function evaluate() {
+  const v = readValues();
+  for (const control of Object.values(controls)) {
+    const invalid = !control.numeric.validity.valid || control.numeric.value === '';
+    control.numeric.classList.toggle('invalid-input', invalid);
+    control.numeric.setAttribute('aria-invalid', String(invalid));
+  }
+  byId('inputError').hidden = !!v;
+  if (!v) {
+    byId('inputError').textContent = 'Introduce un valor válido dentro del intervalo y con el paso indicado. Mientras falte un dato válido, la válvula virtual permanece cerrada.';
+    byId('result').classList.remove('on');
+    byId('valveState').textContent = 'CERRADA';
+    byId('action').textContent = 'REVISAR DATOS';
+    byId('reason').textContent = 'No se calcula una recomendación con parámetros incompletos o fuera de rango.';
+    byId('winningRule').textContent = 'Datos no válidos · cálculo detenido';
+    byId('flowCaption').textContent = 'Paso bloqueado · Sin caudal simulado';
+    byId('valveDrawing').setAttribute('aria-label', 'Electroválvula virtual cerrada por datos no válidos');
+    byId('decisionDock').classList.remove('on');
+    byId('dockState').textContent = 'CERRADA';
+    byId('dockRule').textContent = 'Revisar datos';
+    for (const [key] of defs) {
+      byId(`badge-${key}`).textContent = 'Pendiente';
+      byId(`badge-${key}`).dataset.tone = 'neutral';
+      byId(`detail-${key}`).textContent = 'Completa los datos válidos para recalcular los indicadores.';
+    }
+    byId('threshold-c').textContent = 'Umbral: contracción / referencia ≥ 1,5 Y crecimiento < 0 µm/día.';
+    byId('rules').hidden = true;
+    byId('predicates').hidden = true;
+    byId('diagnostic').hidden = true;
+    return;
+  }
+  byId('rules').hidden = false;
+  byId('predicates').hidden = false;
+  const method = byId('method').value;
+  const d = decide(v, method);
+  byId('result').classList.toggle('on', d.on);
+  byId('valveState').textContent = d.on ? 'ABIERTA' : 'CERRADA';
+  byId('action').textContent = d.action;
+  byId('reason').textContent = d.reason;
+  byId('winningRule').textContent = `Regla decisiva: ${d.rule} de 5 · ${d.on ? 'abrir' : 'cerrar'}`;
+  byId('decisionDock').classList.toggle('on', d.on);
+  byId('dockState').textContent = d.on ? 'ABIERTA' : 'CERRADA';
+  byId('dockRule').textContent = `Regla ${d.rule} · ${d.action.toLocaleLowerCase('es-ES')}`;
+  byId('flowCaption').textContent = d.on ? 'Paso libre · Agua en circulación simulada' : 'Paso bloqueado · Sin caudal simulado';
+  byId('valveDrawing').setAttribute('aria-label', d.on ? 'Electroválvula virtual abierta, con circulación de agua simulada' : 'Electroválvula virtual cerrada, sin circulación de agua');
+  byId('methodHint').textContent = method === 'drip' ? 'El viento no bloquea el goteo en esta simulación.' : 'En aspersión, viento ≥ 35 km/h bloquea el riego si existe necesidad.';
+  for (const [key] of predicates) {
+    byId(`truth-${key}`).textContent = d[key] ? 'SÍ' : 'NO';
+    byId(`truth-${key}`).classList.toggle('yes', d[key]);
+  }
+  byId('current-critical').textContent = `Ahora: ${number(v.d)} % en profundidad.`;
+  byId('current-stress').textContent = `Ahora: ${number(d.ratio, 2)} × y crecimiento ${number(v.g)} µm/día. La comparación usa la relación sin redondear.`;
+  byId('current-demand').textContent = `Ahora: ET₀ ${number(v.e)} · temperatura ${number(v.t)} · radiación ${number(v.s)} · humedad ambiental ${number(v.a)} %.`;
+  byId('current-need').textContent = `Ahora: profundidad ${number(v.d)} % · superficie ${number(v.h)} % · señal ${d.stress ? 'sí' : 'no'} · demanda ${d.demand ? 'sí' : 'no'}.`;
+  ruleDefs.forEach((_, i) => {
+    const rank = i + 1;
+    byId(`rule-${rank}`).classList.toggle('matched', rank === d.rule);
+    if (rank === d.rule) byId(`rule-${rank}`).setAttribute('aria-current', 'true');
+    else byId(`rule-${rank}`).removeAttribute('aria-current');
+    byId(`rule-status-${rank}`).textContent = rank === d.rule ? 'SE APLICA · decide el estado actual' : rank < d.rule ? 'No se cumple · pasa a la siguiente' : 'No se aplica · ya decidió una regla anterior';
+  });
+  const diagnostic = byId('diagnostic');
+  diagnostic.hidden = !(d.stress && !d.need || d.critical && d.windBlock);
+  diagnostic.textContent = d.stress && !d.need ? 'Revisión: existe señal dendrométrica combinada con reserva suficiente. Comprobar raíces, sensores y otras causas; añadir agua no es la respuesta automática.' : 'Reserva crítica y aspersión bloqueada por viento: la prioridad del simulador mantiene el cierre. Revisar una alternativa de riego urgente.';
+  renderFactors(v, d, method);
+}
+
+const scenarios = [
+  {id:'seco', name:'Suelo seco', hint:'Sin lluvia · Goteo', values:[18,24,28,10,0,45,8,600,4,250,200,20], method:'drip', open:true, rule:5},
+  {id:'humedo', name:'Suelo húmedo', hint:'Reserva profunda alta', values:[65,75,24,10,0,60,8,400,3,180,200,40], method:'drip', open:false, rule:1},
+  {id:'lluvia', name:'Lluvia prevista', hint:'90 % · 12 mm · Sin estrés', values:[25,28,20,90,12,80,5,200,2,180,200,20], method:'drip', open:false, rule:4},
+  {id:'estres', name:'Estrés dendrométrico', hint:'Reserva limitada · Con lluvia', values:[30,40,24,90,12,60,8,400,3,450,200,-80], method:'drip', open:true, rule:5},
+  {id:'critico', name:'Reserva crítica + lluvia', hint:'10 % en profundidad', values:[25,10,20,90,12,80,5,200,2,180,200,20], method:'drip', open:true, rule:5},
+  {id:'viento-aspersion', name:'Viento + aspersión', hint:'45 km/h · Suelo seco', values:[18,24,28,10,0,40,45,600,4,250,200,20], method:'sprinkler', open:false, rule:3},
+  {id:'viento-goteo', name:'Viento + goteo', hint:'Mismos datos · Otro sistema', values:[18,24,28,10,0,40,45,600,4,250,200,20], method:'drip', open:true, rule:5},
+  {id:'demanda', name:'Calor y demanda elevada', hint:'Reserva limitada · ET₀ alta', values:[30,40,34,10,0,30,8,900,7,180,200,20], method:'drip', open:true, rule:5},
+  {id:'anomalia', name:'Anomalía fisiológica', hint:'Suelo húmedo · Revisar planta', values:[65,75,30,10,0,40,8,700,5,500,200,-80], method:'drip', open:false, rule:1}
+];
+function clearScenario() {
+  document.querySelectorAll('.scenario').forEach(button => button.setAttribute('aria-pressed', 'false'));
+  byId('scenarioNote').textContent = 'Ajuste manual · Se recalculan las condiciones y se aplica la primera regla válida.';
+}
+function setValues(values, method) {
+  defs.forEach(([key], index) => {
+    controls[key].slider.value = values[index];
+    controls[key].numeric.value = values[index];
+  });
+  byId('method').value = method;
+  evaluate();
+}
+scenarios.forEach((scenario, index) => {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'scenario';
+  button.dataset.scenario = scenario.id;
+  button.setAttribute('aria-pressed', 'false');
+  button.innerHTML = `<span class="number">${String(index + 1).padStart(2, '0')}</span><span><strong>${scenario.name}</strong><small>${scenario.hint} · <span class="${scenario.open ? 'expected-open' : 'expected-close'}">${scenario.open ? 'Abre' : 'Cierra'}</span></small></span>`;
+  button.addEventListener('click', () => {
+    clearScenario();
+    setValues(scenario.values, scenario.method);
+    button.setAttribute('aria-pressed', 'true');
+    byId('scenarioNote').textContent = `Escenario «${scenario.name}» cargado · Puedes modificarlo para comprobar los límites.`;
+  });
+  byId('presets').append(button);
+});
+for (const control of Object.values(controls)) {
+  control.slider.addEventListener('input', () => {
+    control.numeric.value = control.slider.value;
+    clearScenario();
+    evaluate();
+  });
+  control.numeric.addEventListener('input', () => {
+    if (control.numeric.validity.valid && control.numeric.value !== '') control.slider.value = control.numeric.value;
+    clearScenario();
+    evaluate();
+  });
+}
+byId('method').addEventListener('change', () => { clearScenario(); evaluate(); });
+byId('reset').addEventListener('click', () => {
+  clearScenario();
+  setValues(defs.map(def => def[4]), 'drip');
+  byId('scenarioNote').textContent = 'Restablecidos los 12 valores iniciales y el goteo de la V2.';
+});
+evaluate();
+// Mantiene el resultado a la vista mientras se manipulan los controles.
+if ('IntersectionObserver' in window) {
+  const decisionObserver = new IntersectionObserver(entries => {
+    byId('decisionDock').hidden = entries[0].intersectionRatio >= 0.6;
+  }, {threshold:0.6});
+  decisionObserver.observe(byId('result'));
+} else {
+  byId('decisionDock').hidden = false;
+}
+</script>
+</body>
+</html>
